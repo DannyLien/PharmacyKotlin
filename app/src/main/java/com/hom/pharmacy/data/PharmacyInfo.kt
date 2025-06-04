@@ -1,20 +1,22 @@
 package com.hom.pharmacy.data
 
+import java.io.Serializable
+
 data class XXXPharmacyInfo(
     val features: List<Feature>,
     val type: String
-)
+): Serializable
 
 data class Feature(
     val geometry: Geometry,
     val properties: Properties,
     val type: String
-)
+): Serializable
 
 data class Geometry(
     val coordinates: List<Double>,
     val type: String
-)
+): Serializable
 
 data class Properties(
     val address: String,
@@ -32,7 +34,7 @@ data class Properties(
     val town: String,
     val updated: String,
     val website: String
-)
+): Serializable
 
 
 

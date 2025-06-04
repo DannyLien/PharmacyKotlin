@@ -10,6 +10,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.hom.pharmacy.data.XXXPharmacyInfo
 import com.hom.pharmacy.databinding.ActivityMainBinding
@@ -21,6 +23,7 @@ import okhttp3.Response
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var recy: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var binding: ActivityMainBinding
     private val TAG: String? = MainActivity::class.java.simpleName
@@ -41,7 +44,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun findViews() {
         progressBar = binding.progressBar
-
+        recy = binding.recyclerView
+        recy.setHasFixedSize(true)
+        recy.layoutManager = GridLayoutManager(this, 1)
     }
 
     private fun getPharmaciesData() {
@@ -62,6 +67,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "getPharmaciesData: mask- gson- ${pharmacyInfo}")
                 runOnUiThread {
                     progressBar.visibility = View.GONE
+                    recy.adapter = MainAdapter(this@MainActivity, pharmacyInfo.features)
                 }
             }
         })
