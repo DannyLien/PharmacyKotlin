@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/tvNameDet"
+                android:id="@+id/tv_name_det"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -51,14 +51,14 @@
                 app:cardCornerRadius="10dp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvNameDet">
+                app:layout_constraintTop_toBottomOf="@+id/tv_name_det">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/tv_adult"
+                        android:id="@+id/tv_adult_det"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -73,16 +73,16 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tvAdultAmountDet"
+                        android:id="@+id/tv_adult_amount_det"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
                         android:text=" 口罩數量 "
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_adult"
-                        app:layout_constraintStart_toStartOf="@+id/tv_adult"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_adult" />
+                        app:layout_constraintEnd_toEndOf="@+id/tv_adult_det"
+                        app:layout_constraintStart_toStartOf="@+id/tv_adult_det"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_adult_det" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
@@ -110,7 +110,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/tv_child"
+                        android:id="@+id/tv_child_det"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -125,21 +125,21 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:id="@+id/tvChildAmountDet"
+                        android:id="@+id/tv_child_amount_det"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
                         android:text=" 口罩數量 "
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_child"
-                        app:layout_constraintStart_toStartOf="@+id/tv_child"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_child" />
+                        app:layout_constraintEnd_toEndOf="@+id/tv_child_det"
+                        app:layout_constraintStart_toStartOf="@+id/tv_child_det"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_child_det" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/iv_phone_det"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
@@ -150,7 +150,7 @@
                 app:srcCompat="@android:drawable/stat_sys_phone_call" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/iv_address"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="16dp"
@@ -159,34 +159,34 @@
                 android:background="#757575"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView2"
+                app:layout_constraintTop_toBottomOf="@+id/iv_phone_det"
                 app:srcCompat="@android:drawable/ic_dialog_map" />
 
             <TextView
-                android:id="@+id/tvPhoneDet"
+                android:id="@+id/tv_phone_det"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="00 - 00000000"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_phone_det"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toTopOf="@+id/imageView2" />
+                app:layout_constraintStart_toEndOf="@+id/iv_phone_det"
+                app:layout_constraintTop_toTopOf="@+id/iv_phone_det" />
 
             <TextView
-                android:id="@+id/tvAddressDet"
+                android:id="@+id/tv_address_det"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="00 - 00000000"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_address"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView3"
-                app:layout_constraintTop_toTopOf="@+id/imageView3" />
+                app:layout_constraintStart_toEndOf="@+id/iv_address"
+                app:layout_constraintTop_toTopOf="@+id/iv_address" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

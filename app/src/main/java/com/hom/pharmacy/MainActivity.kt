@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getPharmaciesData() {
         progressBar.visibility = View.VISIBLE
-//        val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info.json"
+//        val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info.json"    // 有78筆地址資料空白
         val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info_132.json"
         val okHttpClien = OkHttpClient().newBuilder().build()
         val request = Request.Builder().url(pharmaciesDataUrl).get().build()
@@ -62,12 +62,39 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 val pharmaciesData = response.body?.string()
-//                    Log.d(TAG, "getPharmaciesData: mask- json- ${pharmaciesData}")
+//                Log.d(TAG, "getPharmaciesData: mask- json- ${pharmaciesData}")
                 val pharmacyInfo = Gson().fromJson(pharmaciesData, XXXPharmacyInfo::class.java)
-                Log.d(TAG, "getPharmaciesData: mask- gson- ${pharmacyInfo}")
+//                Log.d(TAG, "getPharmaciesData: mask- gson- ${pharmacyInfo}")
+
+                // filter 篩選
+                val data =
+                    pharmacyInfo.features.filter { it.properties.county == "屏東縣" && it.properties.town == "屏東市" }
+                data.forEach {
+//                    Log.d(TAG, "onResponse: mask- filter- ${it.properties.name}")
+                }
+
+                // groupBy 群組
+                val countyData = pharmacyInfo.features.groupBy { it.properties.county }
+                countyData.forEach { county ->
+                    Log.d(TAG, "onResponse: mask- group- county- ${county.key}")
+                    val townData = county.value.groupBy { it.properties.town }
+                    townData.forEach { town ->
+                        Log.d(TAG, "onResponse: mask- group- town- -------- ${town.key}")
+                        town.value.forEach { pharmacy ->
+                            Log.d(
+                                TAG, "onResponse: mask- group- pharmacy- " +
+                                        " -------- ${pharmacy.properties.name} , " +
+                                        "成人:${pharmacy.properties.mask_adult} , " +
+                                        "小孩:${pharmacy.properties.mask_child}"
+                            )
+                        }
+                    }
+                }
+
                 runOnUiThread {
                     progressBar.visibility = View.GONE
-                    recy.adapter = MainAdapter(this@MainActivity, pharmacyInfo.features)
+//                    recy.adapter = MainAdapter(this@MainActivity, pharmacyInfo.features)  // gson() all
+                    recy.adapter = MainAdapter(this@MainActivity, data)     // filter
                 }
             }
         })

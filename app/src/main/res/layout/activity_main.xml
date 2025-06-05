@@ -26,7 +26,7 @@ android:orientation="vertical"
 app:layout_constraintGuide_percent="0.5" />
 
 <Spinner
-android:id="@+id/spCounty"
+android:id="@+id/spinner_county"
 android:layout_height="wrap_content"
 android:layout_marginEnd="8dp"
 android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@ app:layout_constraintStart_toStartOf="parent"
 app:layout_constraintTop_toTopOf="parent" />
 
 <Spinner
-android:id="@+id/spTown"
+android:id="@+id/spinner_town"
 android:layout_height="wrap_content"
 android:layout_marginEnd="8dp"
 android:layout_marginStart="8dp"
