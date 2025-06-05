@@ -2,10 +2,8 @@ package com.hom.pharmacy
 
 import android.content.Context
 import android.content.Intent
-import android.icu.text.Transliterator.Position
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.hom.pharmacy.data.Feature
@@ -43,9 +41,6 @@ class MainAdapter(val context: Context, val pharmacyList: List<Feature>) :
         }
     }
 
-    interface IItemClickListener {
-        fun onItemClickListener(data: Feature)
-    }
 
 }
 

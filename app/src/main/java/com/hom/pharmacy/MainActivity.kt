@@ -5,27 +5,32 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.ProgressBar
+import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.hom.pharmacy.data.XXXPharmacyInfo
 import com.hom.pharmacy.databinding.ActivityMainBinding
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var recy: RecyclerView
-    private lateinit var progressBar: ProgressBar
+    private lateinit var currentTown: String
+    private lateinit var adapterTown: ArrayAdapter<String>
+    private lateinit var currentCounty: String
+    private lateinit var viewModel: PharmacyViewModel
+    private lateinit var adapterCounty: ArrayAdapter<String>
+    private lateinit var spinnerTown: Spinner
+    private lateinit var spinnerCounty: Spinner
     private lateinit var binding: ActivityMainBinding
+    private lateinit var progressBar: ProgressBar
+    private lateinit var recy: RecyclerView
+    private var getAllCountiesName: List<String>? = null
     private val TAG: String? = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,74 +44,82 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         findViews()
-        getPharmaciesData()
+        progressBar.visibility = View.VISIBLE
+        viewModel = ViewModelProvider(this).get(PharmacyViewModel::class.java)
+        viewModel.vmPharmaciesData()    // 下載口罩資料
+        viewModel.getAllCountiesName.observe(this) {
+            setSpinnerCounty(it)    // 監聽 County
+        }
+        viewModel.getAllTownName.observe(this) {
+            setSpinnerTown(it)      // 監聽 Town
+            progressBar.visibility = View.GONE
+        }
+
+    }
+
+    fun setSpinnerCounty(countyName: List<String>) {
+        adapterCounty = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
+            countyName
+        ).apply {
+            setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item
+            )
+        }
+        spinnerCounty.adapter = adapterCounty
+        spinnerCounty.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                currentCounty = spinnerCounty.selectedItem.toString()
+                viewModel.vmUpdateTown(currentCounty)
+                Log.d(TAG, "onItemSelected: mask- currentCounty- ${currentCounty}")
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+    }
+
+    private fun setSpinnerTown(townName: List<String>) {
+        adapterTown = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
+            townName
+        ).apply {
+            setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item
+            )
+        }
+        spinnerTown.adapter = adapterTown
+        spinnerTown.onItemSelectedListener =
+            object : OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    currentTown = spinnerTown.selectedItem.toString()
+                    Log.d(TAG, "onItemSelected: mask- currentTown- ${currentTown}")
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                }
+            }
     }
 
     private fun findViews() {
         progressBar = binding.progressBar
+        spinnerCounty = binding.spinnerCounty
+        spinnerTown = binding.spinnerTown
         recy = binding.recyclerView
         recy.setHasFixedSize(true)
         recy.layoutManager = GridLayoutManager(this, 1)
-    }
-
-    private fun getPharmaciesData() {
-        progressBar.visibility = View.VISIBLE
-//        val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info.json"    // 有78筆地址資料空白
-        val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info_132.json"
-        val okHttpClien = OkHttpClient().newBuilder().build()
-        val request = Request.Builder().url(pharmaciesDataUrl).get().build()
-        val call = okHttpClien.newCall(request)
-        call.enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val pharmaciesData = response.body?.string()
-//                Log.d(TAG, "getPharmaciesData: mask- json- ${pharmaciesData}")
-                val pharmacyInfo = Gson().fromJson(pharmaciesData, XXXPharmacyInfo::class.java)
-//                Log.d(TAG, "getPharmaciesData: mask- gson- ${pharmacyInfo}")
-
-                // filter 篩選
-                val data =
-                    pharmacyInfo.features.filter { it.properties.county == "屏東縣" && it.properties.town == "屏東市" }
-                data.forEach {
-//                    Log.d(TAG, "onResponse: mask- filter- ${it.properties.name}")
-                }
-
-                // groupBy 群組
-                val countyData = pharmacyInfo.features.groupBy { it.properties.county }
-                countyData.forEach { county ->
-                    Log.d(TAG, "onResponse: mask- group- county- ${county.key}")
-                    val townData = county.value.groupBy { it.properties.town }
-                    townData.forEach { town ->
-                        Log.d(TAG, "onResponse: mask- group- town- -------- ${town.key}")
-                        town.value.forEach { pharmacy ->
-                            Log.d(
-                                TAG, "onResponse: mask- group- pharmacy- " +
-                                        " -------- ${pharmacy.properties.name} , " +
-                                        "成人:${pharmacy.properties.mask_adult} , " +
-                                        "小孩:${pharmacy.properties.mask_child}"
-                            )
-                        }
-                    }
-                }
-
-                runOnUiThread {
-                    progressBar.visibility = View.GONE
-//                    recy.adapter = MainAdapter(this@MainActivity, pharmacyInfo.features)  // gson() all
-                    recy.adapter = MainAdapter(this@MainActivity, data)     // filter
-                }
-            }
-        })
-//            val result = call.execute()
-//            val resultBody = result.body?.string()
-//            Log.d(TAG, "getPharmaciesData: mask- json- ${resultBody}")
-        // gson
-//        CoroutineScope(Dispatchers.IO).launch {
-//            val pharmaciesData = URL(pharmaciesDataUrl).readText()
-//            val pharmacyInfo = Gson().fromJson(pharmaciesData, PharmacyInfo::class.java)
-//            Log.d(TAG, "getPharmaciesData: mask- gson- ${pharmacyInfo}")
-//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -124,9 +137,16 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
 
 }
-
 
 
 
