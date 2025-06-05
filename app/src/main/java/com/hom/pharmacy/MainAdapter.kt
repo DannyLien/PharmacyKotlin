@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.hom.pharmacy.data.Feature
 import com.hom.pharmacy.databinding.ItemViewBinding
 
+// 透過 context Intent 接收 傳遞
 class MainAdapter(val context: Context, val pharmacyList: List<Feature>) :
     RecyclerView.Adapter<MainAdapter.MyViewHolder>() {
     class MyViewHolder(var view: ItemViewBinding) : ViewHolder(view.root) {

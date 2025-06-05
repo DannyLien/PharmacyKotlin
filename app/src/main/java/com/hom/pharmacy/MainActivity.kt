@@ -17,12 +17,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.hom.pharmacy.data.XXXPharmacyInfo
 import com.hom.pharmacy.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var currentTown: String
+    private var currentTown: String = ""
     private lateinit var adapterTown: ArrayAdapter<String>
-    private lateinit var currentCounty: String
+    private var currentCounty: String = ""
     private lateinit var viewModel: PharmacyViewModel
     private lateinit var adapterCounty: ArrayAdapter<String>
     private lateinit var spinnerTown: Spinner
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var progressBar: ProgressBar
     private lateinit var recy: RecyclerView
-    private var getAllCountiesName: List<String>? = null
+    var pharmacyInfo: XXXPharmacyInfo? = null
     private val TAG: String? = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         viewModel = ViewModelProvider(this).get(PharmacyViewModel::class.java)
         viewModel.vmPharmaciesData()    // 下載口罩資料
+        viewModel.getPharmacyInfo.observe(this) {
+            pharmacyInfo = it   // 接收資料
+        }
         viewModel.getAllCountiesName.observe(this) {
             setSpinnerCounty(it)    // 監聽 County
         }
@@ -54,7 +58,6 @@ class MainActivity : AppCompatActivity() {
             setSpinnerTown(it)      // 監聽 Town
             progressBar.visibility = View.GONE
         }
-
     }
 
     fun setSpinnerCounty(countyName: List<String>) {
@@ -106,11 +109,25 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     currentTown = spinnerTown.selectedItem.toString()
                     Log.d(TAG, "onItemSelected: mask- currentTown- ${currentTown}")
+                    updateRecyclerView(pharmacyInfo!!)
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
                 }
             }
+    }
+
+    private fun updateRecyclerView(pharmacyInfo: XXXPharmacyInfo) {
+        pharmacyInfo?.also { pharmacyInfo ->
+            val filterData = pharmacyInfo.features.filter {
+                it.properties.county == currentCounty &&
+                        it.properties.town == currentTown
+            }
+            Log.d(TAG, "updateRecyclerView: mask- filterData- ${filterData}")
+            if (filterData != null) {
+                recy.adapter = MainAdapter(this, filterData)
+            }
+        }
     }
 
     private fun findViews() {

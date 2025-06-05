@@ -19,19 +19,21 @@ class PharmacyViewModel : ViewModel() {
     var allTownName = mutableListOf<String>()       // 篩選 town 不能重複
     var getAllCountiesName = MutableLiveData<List<String>>()    // 監聽 county
     var getAllTownName = MutableLiveData<List<String>>()        // 監聽 town
+    var getPharmacyInfo = MutableLiveData<XXXPharmacyInfo>()    // 監聽 gson
 
     fun vmPharmaciesData() {
         CoroutineScope(Dispatchers.IO).launch {
             val pharmaciesData = URL(pharmaciesDataUrl).readText()
             pharmacyInfo = Gson().fromJson(pharmaciesData, XXXPharmacyInfo::class.java)
 
-            //   groupBy 群組篩選
+            //  groupBy 群組篩選
             pharmacyInfo?.also {
+                getPharmacyInfo.postValue(it)     // 傳遞 pharmacyInfo
                 val countyData = it.features.groupBy { it.properties.county }
                 countyData.forEach { county ->
                     allCountiesName.add(county.key)   // 篩選所有縣市
                 }
-                getAllCountiesName.postValue(allCountiesName)   // 傳送 county
+                getAllCountiesName.postValue(allCountiesName)   // 傳遞 county
             }
         }
     }
@@ -46,12 +48,13 @@ class PharmacyViewModel : ViewModel() {
                 allTownName.add(it.properties.town)
             }
             allTownName = allTownName.distinct().toMutableList()    // 去除重複
-            getAllTownName.postValue(allTownName)   // 傳送 town
+            getAllTownName.postValue(allTownName)   // 傳遞 town
         }
     }
 
-
 }
+
+
 
 
 //   filter 篩選
@@ -63,8 +66,6 @@ class PharmacyViewModel : ViewModel() {
 //                Log.d(TAG, "vmPharmaciesData: mask- filter- " +
 //                        "${it.properties.town} , ${it.properties.name}")
 //            }
-
-
 //            val townData = county.value.groupBy { it.properties.town }
 //            townData.forEach { town ->
 //                town.key
