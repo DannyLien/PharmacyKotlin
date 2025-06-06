@@ -2,6 +2,8 @@ package com.hom.pharmacy
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -58,8 +60,27 @@ class PharmacyDetail : AppCompatActivity() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.pharmacy_detail, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val menuId = item.itemId
+        when (menuId) {
+            R.id.action_detail_back -> {
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
 }
+
+
+
+
 
 
 
