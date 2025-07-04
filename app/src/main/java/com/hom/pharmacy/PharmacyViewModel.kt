@@ -26,7 +26,6 @@ class PharmacyViewModel : ViewModel() {
         CoroutineScope(Dispatchers.IO).launch {
             val pharmaciesData = URL(pharmaciesDataUrl).readText()
             pharmacyInfo = Gson().fromJson(pharmaciesData, XXXPharmacyInfo::class.java)
-
             //  groupBy 群組篩選
             pharmacyInfo?.also {
                 getPharmacyInfo.postValue(it)     // 傳遞 pharmacyInfo
