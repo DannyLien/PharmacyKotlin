@@ -1,5 +1,7 @@
 package com.hom.pharmacy
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -147,8 +149,15 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val menuId = item.itemId
         when (menuId) {
+            R.id.action_maps->{
+              Intent(this,MapsActivity::class.java).also {
+                  startActivity(it)
+              }
+                true
+            }
             R.id.action_exit -> {
                 finish()
+                true
             }
         }
         return super.onOptionsItemSelected(item)

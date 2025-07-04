@@ -1,9 +1,11 @@
 package com.hom.pharmacy
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +43,12 @@ class PharmacyDetail : AppCompatActivity() {
         }
         findViews()
 
+    }
+
+    fun setShowMaps(view: View) {
+        Intent(this, MapsActivity::class.java).also {
+            startActivity(it)
+        }
     }
 
     private fun findViews() {

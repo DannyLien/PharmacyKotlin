@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -47,6 +48,7 @@ dependencies {
     // Gson , com.squareup.okhttp3 , okhttp , Maven Central
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation(libs.play.services.maps)
     // Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
