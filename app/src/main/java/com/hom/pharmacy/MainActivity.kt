@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
     var pharmacyInfo: XXXPharmacyInfo? = null
     private val TAG: String? = MainActivity::class.java.simpleName
 
+    companion object{
+        val  pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info_132.json"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

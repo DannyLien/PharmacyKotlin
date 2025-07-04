@@ -3,6 +3,7 @@ package com.hom.pharmacy
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.hom.pharmacy.MainActivity.Companion.pharmaciesDataUrl
 import com.hom.pharmacy.data.XXXPharmacyInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ class PharmacyViewModel : ViewModel() {
     private val TAG: String? = PharmacyViewModel::class.java.simpleName
 
 //    val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info.json"  // 有78筆地址資料空白
-    val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info_132.json"
+//    val pharmaciesDataUrl = "http://delexons.ddns.net:81/pharmacies/info_132.json"    // 改從 Main 得到
     var allCountiesName = mutableListOf<String>()   // 篩選 county
     var allTownName = mutableListOf<String>()       // 篩選 town 不能重複
     var getAllCountiesName = MutableLiveData<List<String>>()    // 監聽 county

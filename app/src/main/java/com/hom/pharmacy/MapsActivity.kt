@@ -20,9 +20,17 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.hom.pharmacy.MainActivity.Companion.pharmaciesDataUrl
+import com.hom.pharmacy.data.XXXPharmacyInfo
 import com.hom.pharmacy.databinding.ActivityMapsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.URL
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+    private var pharmacyInfo: XXXPharmacyInfo? = null
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val requestLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -77,6 +85,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15f))
             }
             true
+        }
+        getPharmacyData()
+    }
+
+    private fun getPharmacyData() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val pharmaciesData = URL(pharmaciesDataUrl).readText()
+            pharmacyInfo = Gson().fromJson(pharmaciesData, XXXPharmacyInfo::class.java)
+            runOnUiThread {
+                addAllMaker()
+            }
+        }
+    }
+
+    private fun addAllMaker() {
+        pharmacyInfo?.features?.forEach {
+            latlngMarker = mMap.addMarker(
+                MarkerOptions()
+                    .position(
+                        LatLng(
+                            it.geometry.coordinates[1], it.geometry.coordinates[0]
+                        )
+                    )
+                    .title(it.properties.name)
+                    .snippet("成人:${it.properties.mask_adult} , 兒童:${it.properties.mask_child}")
+            )
         }
     }
 
