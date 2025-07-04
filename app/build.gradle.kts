@@ -43,6 +43,10 @@ android {
 }
 
 dependencies {
+    // Google Map
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.android.gms:play-services-maps:19.2.0")
+    implementation("com.google.gms:google-services:4.4.2")
     // Coil
     implementation("io.coil-kt:coil:2.7.0")
     // Gson , com.squareup.okhttp3 , okhttp , Maven Central
