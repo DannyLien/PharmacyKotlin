@@ -1,19 +1,18 @@
 package com.hom.pharmacy
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.LocationSource
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -30,8 +29,12 @@ import kotlinx.coroutines.launch
 import java.net.URL
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-    private var pharmacyInfo: XXXPharmacyInfo? = null
+    private lateinit var binding: ActivityMapsBinding
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var mMap: GoogleMap
+    var latlngMarker: Marker? = null
+    private lateinit var mContext: Context
+    private var pharmacyInfo: XXXPharmacyInfo? = null
     private val requestLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) {
@@ -39,18 +42,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             it[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         ) {
             setMyLocation()
+            getPharmacyData()
         } else {
             Snackbar.make(binding.root, "Loss Location Permission", Snackbar.LENGTH_LONG).show()
         }
     }
-    private lateinit var mMap: GoogleMap
-    private lateinit var binding: ActivityMapsBinding
-    var latlngMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        mContext = this
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(this)
@@ -87,6 +90,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
         getPharmacyData()
+        mMap.setInfoWindowAdapter(MyInfoAdapter(mContext))
     }
 
     private fun getPharmacyData() {
