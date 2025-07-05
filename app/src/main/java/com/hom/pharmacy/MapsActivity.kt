@@ -46,11 +46,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
             it[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         ) {
             setMyLocation()
-//            getPharmacyData()
         } else {
             Snackbar.make(binding.root, "Loss Location Permission", Snackbar.LENGTH_LONG).show()
         }
     }
+
+    //台北101
+    private val defaultLocation = LatLng(25.0338483, 121.5645283)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +71,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        getGPSUpdateMap()
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10f))
+        if (checkGPSLocationPermission()) return    // 確認 GPS Location 權限
         setMyLocation()
     }
 
@@ -78,14 +81,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
-        mMap.setOnMyLocationButtonClickListener {
-            getGPSUpdateMap()
-            true
-        }
-        getGPSUpdateMap()   //
         getPharmacyData()   // Gson load Data
         mMap.setInfoWindowAdapter(MyInfoAdapter(mContext))  // 設定自訂義的資訊視窗樣式
         mMap.setOnInfoWindowClickListener(this)     // 設定資訊視窗點擊監聽器
+        mMap.setOnMyLocationButtonClickListener {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                val latlng = LatLng(it.latitude, it.longitude)
+                mMap!!.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 13f))
+            }
+            true
+        }
     }
 
     private fun checkGPSLocationPermission(): Boolean {
@@ -109,17 +114,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
         return false
     }
 
-    private fun getGPSUpdateMap() {
-        if (checkGPSLocationPermission()) return
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            if (it != null) {
-                latlngMarker?.remove()
-                val latlng = LatLng(it.latitude, it.longitude)
-                latlngMarker = mMap.addMarker(MarkerOptions().position(latlng))
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 11f))
-            }
-        }
-    }
+//    private fun getGPSUpdateMap() {
+//        if (checkGPSLocationPermission()) return
+//        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+//            .addOnSuccessListener {
+//                if (it != null) {
+//                    latlngMarker?.remove()
+//                    val latlng = LatLng(it.latitude, it.longitude)
+//                    latlngMarker = mMap.addMarker(MarkerOptions().position(latlng))
+//                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 13f))
+//                }
+//            }
+//    }
 
     private fun getPharmacyData() {
         CoroutineScope(Dispatchers.IO).launch {
